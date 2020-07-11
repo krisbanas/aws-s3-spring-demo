@@ -3,6 +3,7 @@ buildscript {
 		springBootVersion = "2.3.1.RELEASE"
 		dockerPluginVersion = "6.5.0"
 		dependencyManagementVersion = "1.0.9.RELEASE"
+		awsJavaSdkVersion = "1.11.819"
 	}
 }
 
@@ -30,6 +31,8 @@ repositories {
 dependencies {
 	implementation "org.springframework.boot:spring-boot-starter:$springBootVersion"
 	implementation "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
+	implementation "com.amazonaws:aws-java-sdk-s3:$awsJavaSdkVersion"
+
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation("org.springframework.boot:spring-boot-starter-test:$springBootVersion") {
@@ -46,3 +49,5 @@ docker {
 		baseImage = 'openjdk:14-alpine'
 	}
 }
+
+build.finalizedBy dockerBuildImage
