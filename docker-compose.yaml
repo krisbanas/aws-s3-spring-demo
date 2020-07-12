@@ -3,11 +3,25 @@ services:
   aws-demo:
     image: krisbanas/aws-demo:0.0.1-snapshot
     container_name: aws-demo
+    environment:
+      - MINIO_ENDPOINT=http://s3-minio:9000
     ports:
       - 8080:8080
+#    networks:
+#      - aws-s3-spring-demo_default
+
   s3-minio:
     image: minio/minio:latest
     container_name: s3-minio
+    environment:
+      - MINIO_DOMAIN=localhost
     ports:
       - 9000:9000
     command: "server /data"
+#    networks:
+#      aws-s3-spring-demo_default:
+#        aliases:
+#          - test.s3-minio
+
+#networks:
+#  aws-s3-spring-demo_default:
