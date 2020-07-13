@@ -2,7 +2,7 @@ package krisbanas.awsdemo.controllers;
 
 import com.amazonaws.services.s3.model.Bucket;
 import krisbanas.awsdemo.controllers.api.BucketApi;
-import krisbanas.awsdemo.services.BucketService;
+import krisbanas.awsdemo.services.interfaces.BucketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;

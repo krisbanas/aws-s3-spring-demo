@@ -1,10 +1,10 @@
 package krisbanas.awsdemo.controllers;
 
-import krisbanas.awsdemo.services.AmazonS3Service;
+import krisbanas.awsdemo.controllers.api.ResourceApi;
+import krisbanas.awsdemo.services.BasicResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,36 +14,31 @@ import java.io.IOException;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/bucket/{bucketName}")
-public class ResourceController {
+public class ResourceController implements ResourceApi {
 
-    private final AmazonS3Service amazonS3Service;
+    private final BasicResourceService basicResourceService;
 
     @Autowired
-    public ResourceController(AmazonS3Service amazonS3Service) {
-        this.amazonS3Service = amazonS3Service;
+    public ResourceController(BasicResourceService basicResourceService) {
+        this.basicResourceService = basicResourceService;
     }
 
-    @PostMapping("/file")
-    @ResponseStatus(value = HttpStatus.CREATED)
-    public ResponseEntity<String> storeResource(@RequestPart("file") MultipartFile file, @PathVariable String bucketName) throws IOException {
-        var id = amazonS3Service.storeResourceToBucket(file, bucketName);
+    public ResponseEntity<String> storeResource(MultipartFile file, String bucketName) throws IOException {
+        var id = basicResourceService.storeResourceToBucket(file, bucketName);
+
         return ResponseEntity.created(URI.create(""))
                 .body(id);
     }
 
-    @PostMapping("/file-partial")
-    @ResponseStatus(value = HttpStatus.CREATED)
-    public ResponseEntity<String> storeResourceStreamed(@RequestPart("file") MultipartFile file, @PathVariable String bucketName) throws IOException, InterruptedException {
-        var id = amazonS3Service.storeResourceStreamed(file, bucketName);
+    public ResponseEntity<String> storeResourceStreamed(MultipartFile file, String bucketName) throws IOException, InterruptedException {
+        var id = basicResourceService.storeResourceStreamed(file, bucketName);
+
         return ResponseEntity.created(URI.create(""))
                 .body(id);
     }
 
-    @GetMapping("/file/{resourceId}")
-    @ResponseStatus(value = HttpStatus.OK)
-    public ResponseEntity<Resource> getResource(@PathVariable String bucketName, @PathVariable String resourceId) throws IOException {
-        var resource = amazonS3Service.getResource(bucketName, resourceId);
+    public ResponseEntity<Resource> getResource(String bucketName, String resourceId) throws IOException {
+        var resource = basicResourceService.getResource(bucketName, resourceId);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment;filename=" + resourceId)
@@ -52,10 +47,8 @@ public class ResourceController {
                 .body(resource);
     }
 
-    @DeleteMapping("/file/{resourceId}")
-    @ResponseStatus(value = HttpStatus.ACCEPTED)
-    public ResponseEntity<String> deleteResource(@PathVariable String bucketName, @PathVariable String resourceId) {
-        var deleteSucceeded = amazonS3Service.deleteResource(bucketName, resourceId);
+    public ResponseEntity<String> deleteResource(String bucketName, String resourceId) {
+        var deleteSucceeded = basicResourceService.deleteResource(bucketName, resourceId);
         if (deleteSucceeded) return ResponseEntity.accepted().body("Successfully deleted resource: " + resourceId);
         return ResponseEntity.noContent().build();
     }

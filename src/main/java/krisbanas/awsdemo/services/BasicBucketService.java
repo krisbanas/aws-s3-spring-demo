@@ -3,6 +3,7 @@ package krisbanas.awsdemo.services;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.Bucket;
 import krisbanas.awsdemo.exceptions.BucketException;
+import krisbanas.awsdemo.services.interfaces.BucketService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -10,18 +11,20 @@ import java.util.List;
 
 @Slf4j
 @Service
-public class BucketService {
+public class BasicBucketService implements BucketService {
 
     private final AmazonS3 amazonS3;
 
-    public BucketService(AmazonS3 amazonS3) {
+    public BasicBucketService(AmazonS3 amazonS3) {
         this.amazonS3 = amazonS3;
     }
 
+    @Override
     public List<Bucket> getAllBuckets() {
         return amazonS3.listBuckets();
     }
 
+    @Override
     public Bucket createBucket(String bucketName) {
         throwExceptionIfBucketDoesNotExist(bucketName);
         Bucket newBucket = amazonS3.createBucket(bucketName);
@@ -29,6 +32,7 @@ public class BucketService {
         return newBucket;
     }
 
+    @Override
     public boolean deleteBucket(String bucketName) {
         if (amazonS3.doesBucketExistV2(bucketName)) return deleteBucketWithContents(bucketName);
         log.warn("Cannot delete bucket {}. Bucket does not exists.", bucketName);
