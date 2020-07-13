@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "s3")
 public class AmazonS3ConfigurationProperties {
+
     @NonNull
     private String endpoint;
 

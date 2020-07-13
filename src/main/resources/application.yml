@@ -2,6 +2,10 @@ spring:
   main:
     banner-mode: "off"
     lazy-initialization: true
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
 
 s3:
   endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
